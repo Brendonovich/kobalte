@@ -207,32 +207,32 @@ export function createSelectableItem<T extends HTMLElement>(
 	});
 
 	// Focus the associated DOM node when this item becomes the focusedKey.
-	createEffect(
-		on(
-			[
-				ref,
-				key,
-				shouldUseVirtualFocus,
-				() => manager().focusedKey(),
-				() => manager().isFocused(),
-			],
-			([refEl, key, shouldUseVirtualFocus, focusedKey, isFocused]) => {
-				if (
-					refEl &&
-					key === focusedKey &&
-					isFocused &&
-					!shouldUseVirtualFocus &&
-					document.activeElement !== refEl
-				) {
-					if (props.focus) {
-						props.focus();
-					} else {
-						focusWithoutScrolling(refEl);
-					}
-				}
-			},
-		),
-	);
+	// createEffect(
+	// 	on(
+	// 		[
+	// 			ref,
+	// 			key,
+	// 			shouldUseVirtualFocus,
+	// 			() => manager().focusedKey(),
+	// 			() => manager().isFocused(),
+	// 		],
+	// 		([refEl, key, shouldUseVirtualFocus, focusedKey, isFocused]) => {
+	// 			if (
+	// 				refEl &&
+	// 				key === focusedKey &&
+	// 				isFocused &&
+	// 				!shouldUseVirtualFocus &&
+	// 				document.activeElement !== refEl
+	// 			) {
+	// 				if (props.focus) {
+	// 					props.focus();
+	// 				} else {
+	// 					focusWithoutScrolling(refEl);
+	// 				}
+	// 			}
+	// 		},
+	// 	),
+	// );
 
 	return {
 		isSelected,

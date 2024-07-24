@@ -416,15 +416,15 @@ export function createSelectableCollection<
 				scrollEl.scrollLeft = scrollPos.left;
 
 				// Refocus and scroll the focused item into view if it exists within the scrollable region.
-				const element = scrollEl.querySelector(
-					`[data-key="${manager.focusedKey()}"]`,
-				);
+				// const element = scrollEl.querySelector(
+				// 	`[data-key="${manager.focusedKey()}"]`,
+				// );
 
-				if (element) {
-					// This prevents a flash of focus on the first/last element in the collection
-					focusWithoutScrolling(element as HTMLElement);
-					scrollIntoView(scrollEl, element as HTMLElement);
-				}
+				// if (element) {
+				// 	// This prevents a flash of focus on the first/last element in the collection
+				// 	focusWithoutScrolling(element as HTMLElement);
+				// 	scrollIntoView(scrollEl, element as HTMLElement);
+				// }
 			}
 		}
 	};
