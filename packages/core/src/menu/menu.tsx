@@ -153,20 +153,21 @@ export function Menu(props: MenuProps) {
 		disclosureState.toggle();
 	};
 
-	const _focusContent = () => {
+	const _focusContent = (e?: PointerEvent) => {
 		const content = contentRef();
 
 		if (content) {
-			focusWithoutScrolling(content);
+			if (!e?.defaultPrevented) focusWithoutScrolling(content);
+
 			listState.selectionManager().setFocused(true);
 			listState.selectionManager().setFocusedKey(undefined);
 		}
 	};
 
-	const focusContent = () => {
+	const focusContent = (e?: PointerEvent) => {
 		if (optionalNavigationMenuContext != null)
-			setTimeout(() => _focusContent());
-		else _focusContent();
+			setTimeout(() => _focusContent(e));
+		else _focusContent(e);
 	};
 
 	const registerNestedMenu = (element: HTMLElement) => {
@@ -196,7 +197,7 @@ export function Menu(props: MenuProps) {
 			return;
 		}
 
-		focusContent();
+		focusContent(e);
 	};
 
 	const onTriggerLeave = (e: PointerEvent) => {
