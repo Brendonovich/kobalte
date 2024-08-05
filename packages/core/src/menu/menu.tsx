@@ -125,8 +125,10 @@ export function Menu(props: MenuProps) {
 		onOpenChange: (isOpen) => local.onOpenChange?.(isOpen),
 	});
 
+	const isOpen = () => rootContext.forceMount() || disclosureState.isOpen();
+
 	const { present: contentPresent } = createPresence({
-		show: () => rootContext.forceMount() || disclosureState.isOpen(),
+		show: () => isOpen(),
 		element: () => contentRef() ?? null,
 	});
 
@@ -157,7 +159,8 @@ export function Menu(props: MenuProps) {
 		const content = contentRef();
 
 		if (content) {
-			focusWithoutScrolling(content);
+			if (isOpen()) focusWithoutScrolling(content);
+
 			listState.selectionManager().setFocused(true);
 			listState.selectionManager().setFocusedKey(undefined);
 		}
