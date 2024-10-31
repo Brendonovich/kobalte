@@ -328,7 +328,7 @@ export function SelectBase<
 	};
 
 	// Only options without option groups.
-	const flattenOptions = createMemo(() => {
+	const flattenOptions = () => {
 		const optionGroupChildren = local.optionGroupChildren;
 
 		// The combobox doesn't contains option groups.
@@ -340,7 +340,7 @@ export function SelectBase<
 			(item) =>
 				((item as any)[optionGroupChildren] as Option[]) ?? (item as Option),
 		);
-	});
+	};
 
 	// Only option keys without option groups.
 	const flattenOptionKeys = createMemo(() => {
@@ -395,9 +395,9 @@ export function SelectBase<
 		getSectionChildren: () => local.optionGroupChildren as any,
 	});
 
-	const selectedOptions = createMemo(() => {
+	const selectedOptions = () => {
 		return getOptionsFromValues(listState.selectionManager().selectedKeys());
-	});
+	};
 
 	const removeOptionFromSelection = (option: Option) => {
 		listState.selectionManager().toggleSelection(getOptionValue(option));

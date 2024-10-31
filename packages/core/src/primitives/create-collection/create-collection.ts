@@ -31,7 +31,7 @@ export function createCollection<C extends Collection<CollectionNode>>(
 	props: CreateCollectionProps<C>,
 	deps: Array<Accessor<any>> = [],
 ) {
-	return createMemo(() => {
+	return () => {
 		const nodes = buildNodes({
 			dataSource: access(props.dataSource),
 			getKey: access(props.getKey),
@@ -44,5 +44,5 @@ export function createCollection<C extends Collection<CollectionNode>>(
 		for (let i = 0; i < deps.length; i++) deps[i]();
 
 		return props.factory(nodes);
-	});
+	};
 }
