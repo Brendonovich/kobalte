@@ -2,8 +2,10 @@ import {
 	type ValidationState,
 	access,
 	createGenerateId,
+	getPrecision,
 	mergeDefaultProps,
 	mergeRefs,
+	snapValueToStep,
 } from "@kobalte/utils";
 import {
 	type JSX,
@@ -183,6 +185,9 @@ export function NumberFieldRoot<T extends ValidComponent = "div">(
 		return new NumberFormatter(locale(), local.formatOptions);
 	});
 
+	const formatNumber = (number: number) =>
+		local.format ? numberFormatter().format(number) : number.toString();
+
 	const parseRawValue = (value: string | number | undefined) =>
 		local.format && typeof value !== "number"
 			? numberParser().parse(value ?? "")
@@ -201,14 +206,12 @@ export function NumberFieldRoot<T extends ValidComponent = "div">(
 		value: () => local.value,
 		defaultValue: () => local.defaultValue ?? local.rawValue,
 		onChange: (value) => {
-			local.onChange?.(
-				typeof value === "number" ? numberFormatter().format(value) : value,
-			);
+			local.onChange?.(typeof value === "number" ? formatNumber(value) : value);
 			local.onRawValueChange?.(parseRawValue(value));
 		},
 	});
 
-	local.onRawValueChange?.(parseRawValue(value()));
+	if (value() !== undefined) local.onRawValueChange?.(parseRawValue(value()));
 
 	function isAllowedInput(char: string): boolean {
 		if (local.allowedInput !== undefined) return local.allowedInput.test(char);
@@ -265,7 +268,7 @@ export function NumberFieldRoot<T extends ValidComponent = "div">(
 		setValue,
 		rawValue: () => parseRawValue(value()),
 		generateId: createGenerateId(() => access(formControlProps.id)!),
-		formatNumber: (number: number) => numberFormatter().format(number),
+		formatNumber,
 		format: () => {
 			if (!local.format) return;
 			let rawValue = context.rawValue();
@@ -308,11 +311,33 @@ export function NumberFieldRoot<T extends ValidComponent = "div">(
 			batch(() => {
 				let newValue = rawValue;
 
-				if (rawValue % 1 === 0) {
-					newValue += offset;
-				} else {
-					if (offset > 0) newValue = Math.ceil(newValue);
-					else newValue = Math.floor(newValue);
+				const operation = offset > 0 ? "+" : "-";
+				const localStep = Math.abs(offset);
+				// If there was no min or max provided, don't use our default values
+				// use NaN instead to help with the calculation which will use 0
+				// instead for a NaN value
+				const min =
+					props.minValue === undefined ? Number.NaN : context.minValue();
+				const max =
+					props.maxValue === undefined ? Number.NaN : context.maxValue();
+
+				// Try to snap the value to the nearest step
+				newValue = snapValueToStep(rawValue, min, max, localStep);
+
+				// If the value didn't change in the direction we wanted to,
+				// then add the step and snap that value
+				if (
+					!(
+						(operation === "+" && newValue > rawValue) ||
+						(operation === "-" && newValue < rawValue)
+					)
+				) {
+					newValue = snapValueToStep(
+						handleDecimalOperation(operation, rawValue, localStep),
+						min,
+						max,
+						localStep,
+					);
 				}
 
 				context.setValue(newValue);
@@ -351,4 +376,35 @@ export function NumberFieldRoot<T extends ValidComponent = "div">(
 			</NumberFieldContext.Provider>
 		</FormControlContext.Provider>
 	);
+}
+
+function handleDecimalOperation(
+	operator: "-" | "+",
+	value1: number,
+	value2: number,
+): number {
+	let result = operator === "+" ? value1 + value2 : value1 - value2;
+	if (
+		Number.isFinite(value1) &&
+		Number.isFinite(value2) &&
+		(value2 % 1 !== 0 || value1 % 1 !== 0)
+	) {
+		const offsetPrecision = getPrecision(value2);
+		const valuePrecision = getPrecision(value1);
+
+		const multiplier = 10 ** Math.max(offsetPrecision, valuePrecision);
+
+		const multipliedOffset = Math.round(value2 * multiplier);
+		const multipliedValue = Math.round(value1 * multiplier);
+
+		const next =
+			operator === "+"
+				? multipliedValue + multipliedOffset
+				: multipliedValue - multipliedOffset;
+
+		// Undo multiplier to get the new value
+		result = next / multiplier;
+	}
+
+	return result;
 }

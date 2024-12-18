@@ -87,6 +87,9 @@ export interface ComboboxBaseOptions<Option, OptGroup = never>
 		PopperRootOptions,
 		"anchorRef" | "contentRef" | "onCurrentPlacementChange"
 	> {
+	/** Prevents input reset on combobox blur when content is displayed. */
+	noResetInputOnBlur?: boolean;
+
 	/** The localized strings of the component. */
 	translations?: ComboboxIntlTranslations;
 
@@ -301,6 +304,7 @@ export function ComboboxBase<
 	const [local, popperProps, formControlProps, others] = splitProps(
 		mergedProps,
 		[
+			"noResetInputOnBlur",
 			"translations",
 			"itemComponent",
 			"sectionComponent",
@@ -589,13 +593,18 @@ export function ComboboxBase<
 
 	const { present: contentPresent } = createPresence({
 		show: () => local.forceMount || disclosureState.isOpen(),
-		element: contentRef,
+		element: () => contentRef() ?? null,
 	});
 
 	const open = (
 		focusStrategy: FocusStrategy | boolean,
 		triggerMode?: ComboboxTriggerMode,
 	) => {
+		// If set to only open manually, ignore other triggers
+		if (local.triggerMode === "manual" && triggerMode !== "manual") {
+			return;
+		}
+
 		// Show all option if menu is manually opened.
 		const showAllOptions = setShowAllOptions(triggerMode === "manual");
 
@@ -709,9 +718,10 @@ export function ComboboxBase<
 			const selectedOption = allOptions().find(
 				(option) => getOptionValue(option) === selectedKey,
 			);
-
+			if (local.noResetInputOnBlur && !selectedOption) return;
 			setInputValue(selectedOption ? getOptionLabel(selectedOption) : "");
 		} else {
+			if (local.noResetInputOnBlur) return;
 			setInputValue("");
 		}
 	};

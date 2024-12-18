@@ -26,7 +26,6 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 			{
 				title: "Polymorphism",
 				href: "/docs/core/overview/polymorphism",
-				status: "updated",
 			},
 			{
 				title: "Server side rendering",
@@ -50,6 +49,11 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 				href: "/docs/core/components/alert-dialog",
 			},
 			{
+				title: "Badge",
+				href: "/docs/core/components/badge",
+				status: "new",
+			},
+			{
 				title: "Breadcrumbs",
 				href: "/docs/core/components/breadcrumbs",
 			},
@@ -64,6 +68,36 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 			{
 				title: "Collapsible",
 				href: "/docs/core/components/collapsible",
+			},
+			{
+				title: "Color Area",
+				href: "/docs/core/components/color-area",
+				status: "new",
+			},
+			{
+				title: "Color Channel Field",
+				href: "/docs/core/components/color-channel-field",
+				status: "new",
+			},
+			{
+				title: "Color Field",
+				href: "/docs/core/components/color-field",
+				status: "new",
+			},
+			{
+				title: "Color Slider",
+				href: "/docs/core/components/color-slider",
+				status: "new",
+			},
+			{
+				title: "Color Swatch",
+				href: "/docs/core/components/color-swatch",
+				status: "new",
+			},
+			{
+				title: "Color Wheel",
+				href: "/docs/core/components/color-wheel",
+				status: "new",
 			},
 			{
 				title: "Combobox",
@@ -82,6 +116,10 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 				href: "/docs/core/components/dropdown-menu",
 			},
 			{
+				title: "File Upload",
+				href: "/docs/core/components/file-upload",
+			},
+			{
 				title: "Hover Card",
 				href: "/docs/core/components/hover-card",
 			},
@@ -98,9 +136,13 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 				href: "/docs/core/components/menubar",
 			},
 			{
+				title: "Meter",
+				href: "/docs/core/components/meter",
+				status: "new",
+			},
+			{
 				title: "Navigation Menu",
 				href: "/docs/core/components/navigation-menu",
-				status: "new",
 			},
 			{
 				title: "Number Field",
@@ -121,6 +163,11 @@ const CORE_NAV_SECTIONS: NavSection[] = [
 			{
 				title: "Radio Group",
 				href: "/docs/core/components/radio-group",
+			},
+			{
+				title: "Search",
+				href: "/docs/core/components/search",
+				status: "new",
 			},
 			{
 				title: "Select",
